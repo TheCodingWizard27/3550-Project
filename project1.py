@@ -74,3 +74,22 @@ threading.Thread(target=clean_expired_keys, daemon=True).start()
 # Generating the first RSA key pair when the application starts
 generate_and_store_key()
 
+# Function for converting a public key from a PEM format into a JWKS format
+def public_key_to_jwk(public_key_pem, kid):
+    public_key = serialization.load_pem_public_key(public_key_pem.encode())
+    
+    numbers = public_key.public_numbers()
+    
+    # Converting the modules (n) and exponent (e) to  base64 URL-safe encoding
+    
+    n = base64.urlsafe_b64encode(numbers.n.to_bytes((numbers.n.bit_length() + 7) // 8, 'big')).decode().rstrip("=")
+    e = base64.urlsafe_b64encode(numbers.e.to_bytes((numbers.e.bit_length() + 7) // 8, 'big')).decode().rstrip("=")
+    
+    return {
+       "kty": "RSA",
+       "n": n,
+       "e": e,
+       "alg": "RS256",
+       "use": "sig",
+       "kid": kid  # Include Key ID in JWKS
+   }
