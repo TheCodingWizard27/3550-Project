@@ -57,3 +57,15 @@ def generate_and_store_key():
     }
     
     return kid
+
+
+# Function for cleaning expired keys periodically
+def clean_expired_keys():
+    while True:
+        time.sleep(60) # Checking every 60 second
+        now = time.time()
+        expired_keys = [kid for kid, key in key_store.items() if key["expiry"] < now]
+        for kid in expired_keys:
+            del key_store[kid]
+            
+#
