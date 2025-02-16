@@ -101,7 +101,49 @@ def get_jwks(): # Returning the JSON Web Key Set (JWKS) with only unexpired keys
    now = time.time()
    keys = [
        public_key_to_jwk(key["public_key"], kid)
-       for kid, key in keys_store.items() if key["expiry"] > now  # Filter out expired keys
+       for kid, key in key_store.items() if key["expiry"] > now  # Filter out expired keys
    ]
    return {"keys": keys}
 
+# Endpoint for issuing a JWT token
+@app.post("/auth")
+def authenticate(expired: bool = Query(default=False)): # Issues a JWT token with an option to use an expired key.
+   try:
+       now = time.time()
+       valid_keys = {kid: key for kid, key in key_store.items() if key["expiry"] > now}
+
+       if not valid_keys:
+           return JSONResponse(status_code=500, content={"detail": "No valid keys available"})
+
+       if expired:
+           # If expired key is requested, checking for existing expired keys
+           expired_keys = {kid: key for kid, key in key_store.items() if key["expiry"] <= now}
+          
+           if not expired_keys:
+               # If no expired key exists, generating a new one and marking it as expired
+               expired_kid = generate_and_store_key()
+               key_store[expired_kid]["expiry"] = now - 600  # Force expired key
+               expired_keys[expired_kid] = key_store[expired_kid]
+
+           # Using an expired key
+           kid, key_data = next(iter(expired_keys.items()))
+           exp_time = now - 600  # Setting token expiration time to 10 minutes ago
+       else:
+           # Using a valid key
+           kid, key_data = next(iter(valid_keys.items()))
+           exp_time = now + 600  # Token expires in 10 minutes
+
+       private_key = key_data["private_key"]
+
+       # Generating JWT token with kid (Key ID) in the header
+       token = jwt.encode(
+           {"sub": "user123", "exp": exp_time, "iat": now},
+           private_key,
+           algorithm="RS256",
+           headers={"kid": kid}  # Including Key ID in JWT header
+       )
+
+       return {"token": token}
+
+   except Exception as e:
+       return JSONResponse(status_code=500, content={"detail": str(e)})
