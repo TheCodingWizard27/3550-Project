@@ -72,3 +72,6 @@ def test_expired_keys_cleanup():
 
 if __name__ == "__main__":
     pytest.main()
+
+# To run the test:
+# pytest --cov=project1 --cov-report=term-missing
