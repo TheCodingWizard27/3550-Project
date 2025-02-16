@@ -116,11 +116,11 @@ def authenticate(expired: bool = Query(default=False)): # Issues a JWT token wit
            return JSONResponse(status_code=500, content={"detail": "No valid keys available"})
 
        if expired:
-           # If expired key is requested, checking for existing expired keys
+           # Checking for existing expired keys, if expired key are requested
            expired_keys = {kid: key for kid, key in key_store.items() if key["expiry"] <= now}
           
            if not expired_keys:
-               # If no expired key exists, generating a new one and marking it as expired
+               #  Generating a new key and marking it as expired, if no expired key exists
                expired_kid = generate_and_store_key()
                key_store[expired_kid]["expiry"] = now - 600  # Force expired key
                expired_keys[expired_kid] = key_store[expired_kid]
@@ -147,3 +147,6 @@ def authenticate(expired: bool = Query(default=False)): # Issues a JWT token wit
 
    except Exception as e:
        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+# To run the server: use the command below
+# uvicorn project1:app --host 127.0.0.1 --port 8080 --reload
