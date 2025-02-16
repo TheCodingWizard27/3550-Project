@@ -43,3 +43,17 @@ def generate_rsa_key():
     
     
     return private_pem, public_pem
+
+
+# Function for generating and storing a new RSA key pair with an expiry time
+def generate_and_store_key():
+    private_key, public_key = generate_rsa_key()
+    kid = str(int(time.time())) # Unique Key ID using a Timestamp
+    expiry = time.time() + KEY_EXPIRY_TIME # Setting the expiration time
+    key_store[kid] = {
+        "private_key": private_key,
+        "public_key": public_key,
+        "expiry": expiry
+    }
+    
+    return kid
