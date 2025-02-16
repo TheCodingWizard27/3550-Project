@@ -68,4 +68,9 @@ def clean_expired_keys():
         for kid in expired_keys:
             del key_store[kid]
             
-#
+# Running the key cleanup function in the background
+threading.Thread(target=clean_expired_keys, daemon=True).start()
+
+# Generating the first RSA key pair when the application starts
+generate_and_store_key()
+
