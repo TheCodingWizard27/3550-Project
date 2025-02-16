@@ -93,3 +93,7 @@ def public_key_to_jwk(public_key_pem, kid):
        "use": "sig",
        "kid": kid  # Include Key ID in JWKS
    }
+
+
+# Endpoint for exposing the JWKS (JSON Web Key Set)
+@app.get("/.well-known/jwks.json")
