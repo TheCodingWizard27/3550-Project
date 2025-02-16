@@ -97,3 +97,11 @@ def public_key_to_jwk(public_key_pem, kid):
 
 # Endpoint for exposing the JWKS (JSON Web Key Set)
 @app.get("/.well-known/jwks.json")
+def get_jwks(): # Returning the JSON Web Key Set (JWKS) with only unexpired keys.
+   now = time.time()
+   keys = [
+       public_key_to_jwk(key["public_key"], kid)
+       for kid, key in keys_store.items() if key["expiry"] > now  # Filter out expired keys
+   ]
+   return {"keys": keys}
+
