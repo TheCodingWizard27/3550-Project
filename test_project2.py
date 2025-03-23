@@ -47,4 +47,4 @@ def test_jwks_invalid_method():
     """Testing invalid HTTP method on JWKS endpoint."""
     response = client.post("/.well-known/jwks.json")
     assert response.status_code == 405  # This method should not be allowed
-# To run tests: pytest --cov=project1 --cov-report=term-missing
+# To run tests: pytest --cov=project2 --cov-report=term-missing
