@@ -42,3 +42,17 @@ def generate_rsa_key(expiration):
 # Ensuring we have at least one valid and one expired key
 generate_rsa_key(int(time.time()) - 10)  # Expired Key
 generate_rsa_key(int(time.time()) + 3600)  # Valid Key
+
+
+# Fetching the Private Key from the DB
+def get_private_key(expired=False):
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    current_time = int(time.time())
+    query = "SELECT kid, key FROM keys WHERE exp {} ? ORDER BY exp DESC LIMIT 1".format("<" if expired else ">")
+    cursor.execute(query, (current_time,))
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        raise HTTPException(status_code=404, detail="No appropriate key found")
+    return row
