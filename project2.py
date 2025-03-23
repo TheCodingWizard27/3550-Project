@@ -56,3 +56,19 @@ def get_private_key(expired=False):
     if not row:
         raise HTTPException(status_code=404, detail="No appropriate key found")
     return row
+
+# POST: /auth - Generate JWT
+def create_jwt(private_key_pem, kid):
+    private_key = serialization.load_pem_private_key(
+        private_key_pem.encode(), password=None
+    )
+    now = int(time.time())
+    payload = {"sub": "user123", "exp": now + 600, "iat": now}
+    token = jwt.encode(payload, private_key, algorithm="RS256", headers={"kid": str(kid)})
+    return token
+
+@app.post("/auth")
+def auth(expired: bool = Query(False)):
+    kid, private_key_pem = get_private_key(expired)
+    token = create_jwt(private_key_pem, kid)
+    return {"token": token}
