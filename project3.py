@@ -196,3 +196,4 @@ async def generate_key():
 
    return {"message": "Key generated and stored securely."}
 
+# To run the program: uvicorn project3:app --host 127.0.0.1 --port 8080 --reload
