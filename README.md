@@ -38,7 +38,7 @@ The server supports user registration with secure password hashing, authenticati
 1. Set your AES encryption key as an environment variable:
 
    ```bash
-   export NOT_MY_KEY="your-256-bit-secret-key-here"
+   export NOT_MY_KEY="rS8qXz1u5E9kV3cD0Yh6aTzLpB2nWm7j"
    ```
 
    > (The `NOT_MY_KEY` must be a secure 32-byte (256-bit) key.)
