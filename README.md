@@ -108,7 +108,7 @@ The server supports user registration with secure password hashing, authenticati
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 This project includes a comprehensive test suite using `pytest`.
 
@@ -129,7 +129,7 @@ The test suite verifies:
 ---
 
 
-## 🔥 Notes
+##  Notes
 
 - Private keys are AES-encrypted using the `NOT_MY_KEY` environment variable.
 - Authentication rate limiting protects against potential DoS attacks.
